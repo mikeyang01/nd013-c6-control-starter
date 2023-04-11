@@ -43,14 +43,14 @@ void PID::UpdateError(double cte) {
   */
   
   if(delta_time>0){
-    p_error = cte;
+    //微分项的误差需要考虑当前误差与上一次误差的差异。因此,需要使用-号计算当前误差与上一次误差的差异
+    d_error = (cte-p_error) / delta_time;
     
   	//积分项的误差需要考虑历史误差的累加. 因此，需要使用+号将当前误差值累加到历史误差值中
     i_error = i_error + cte*delta_time;
+    
+    p_error = cte;
 
-    //微分项的误差需要考虑当前误差与上一次误差的差异。因此,需要使用-号计算当前误差与上一次误差的差异
-    d_error = (cte-p_error) / delta_time;
-  
   }else{
     d_error = 0.0;
   } 
