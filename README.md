@@ -101,15 +101,17 @@ You might need to install a few additional python modules:
 pip3 install pandas
 pip3 install matplotlib
 ```
+### Simulator Screenshot
+<img src="img/simulator.jpg"/>
 
-Answer the following questions:
+### Answer the following questions:
 - Add the plots to your report and explain them (describe what you see)
 Firstly, I set throttle for PID parameter as follows:
 
 Steering Plot
-<img src="img/steering_plot.png"/>
+<img src="img/steer.png"/>
 Throttle Plot
-<img src="img/throttle_plot.png"/>
+<img src="img/throttle.png"/>
 
 - What is the effect of the PID according to the plots, how each part of the PID affects the control command?
  
