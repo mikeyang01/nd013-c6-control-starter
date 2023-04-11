@@ -38,7 +38,7 @@ public:
     * Delta time
     */
   	//为微分准备的
-	double deltaTime;
+	double delta_time;
 
     /*
     * Constructor

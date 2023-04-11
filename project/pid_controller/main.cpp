@@ -216,15 +216,18 @@ int main()
 	time_t prev_timer;
 	time_t timer;
 	time(&prev_timer);
-
-	// initialize pid steer, TODO (Step 1): create pid (pid_steer) for steer command and initialize values
-	// initialize pid throttle, TODO (Step 1): create pid (pid_throttle) for throttle command and initialize values
-	// pid_steer控制汽车的转向，pid_throttle控制汽车的油门。
+  	/*
+    ------- Step1 --------
+    TODO (Step 1): create pid (pid_throttle) for throttle command and initialize values
+    initialize pid_steer控制汽车的转向，pid_throttle控制汽车的油门。
+    */
 	PID pid_steer = PID();
-	PID pid_throttle = PID();
-	// 这几个值怎么定的???????????
-	pid_steer.Init(0.2, 0.001, 0.5, 1.2, -1.2);
-	pid_throttle.Init(0.15, 0.001, 0.02, 1, -1);
+  	//pid_steer.Init(0.2, 0.0005, 0.2, 1.2, -1.2);
+	pid_steer.Init(0.29, 0.0011,0.71, 1.2, -1.2);
+
+  	PID pid_throttle = PID();
+  	//pid_throttle.Init(0.2, 0.001, 0.005, 1.0, -1.0);
+  	pid_throttle.Init(0.21,0.001,0.019, 1, -1);
 
 	h.onMessage([ &pid_steer, &pid_throttle, &new_delta_time, &timer, &prev_timer, &i, &prev_timer](uWS::WebSocket<uWS::SERVER > ws, char *data, size_t length, uWS::OpCode opCode)
 	{
@@ -283,11 +286,12 @@ int main()
 			////////////////////////////////////////
 			// Steering control
 			////////////////////////////////////////
-			/**
-			 *TODO (step 3): uncomment these lines
-			 **/
-			// Update the delta time with the previous command
-			pid_steer.UpdateDeltaTime(new_delta_time);
+			/*
+            ------- Step3 --------
+			TODO (step 3): uncomment these lines
+			Update the delta time with the previous command
+			*/
+          	pid_steer.UpdateDeltaTime(new_delta_time);
 
 			// Compute steer error
 			double error_steer;
@@ -295,12 +299,14 @@ int main()
           	double steer_output;
           	double dis_min = 10000.0;//为啥???
           	int close_id = 0;//为啥???
-			/**
-			 *TODO (step 3): compute the steer error (error_steer) from the position and the desired trajectory
-			 **/
+
+          	/*
+            ------- Step3 --------
+			TODO (step 3): compute the steer error from the position and the desired trajectory
+			*/
 			for (int i = 0; i < x_points.size(); ++i)
 			{
-			 	// 使用勾股定理来计算距离计算车辆当前位置与一组目标点之间的距离           
+			 	//使用勾股定理来计算距离计算车辆当前位置与一组目标点之间的距离           
 				double act_dis = pow((x_position - x_points[i]), 2) + pow((y_position - y_points[i]), 2);
 				if (act_dis < dis_min)
 				{
@@ -311,13 +317,15 @@ int main()
 			}
 
 			//计算车辆当前的航向角与目标点之间的角度误差。以便进行后续的控制操作，例如调整车辆的转向角度。
-			error_steer = angle_between_points(x_position, y_position, x_points[close_id], y_points[close_id]) - yaw;
+			error_steer = angle_between_points(
+              x_position, y_position, x_points[close_id], y_points[close_id]) - yaw;
 
-			/**
-			 *TODO (step 3): uncomment these lines
-			 **/
-			// Compute control to apply
-			pid_steer.UpdateError(error_steer);
+			/*
+            ------- Step3 --------
+			TODO (step 3): uncomment these lines
+			Compute control to apply
+			*/
+            pid_steer.UpdateError(error_steer);
 			steer_output = pid_steer.TotalError();
 
 			// Save data
@@ -334,35 +342,37 @@ int main()
 			////////////////////////////////////////
 			// Throttle control
 			////////////////////////////////////////
-			/**
-			 *TODO (step 2): uncomment these lines
-			 **/
-			// Update the delta time with the previous command
+			/*
+            ------- Step2 --------
+			TODO (step 2): uncomment these lines
+			Update the delta time with the previous command		
+            */
 			pid_throttle.UpdateDeltaTime(new_delta_time);
 
 			// Compute error of speed
 			double error_throttle;
           
-			/**
-			 *TODO (step 2): compute the throttle error (error_throttle) from the position and the desired speed
-			 **/
-			// modify the following line for step 2
 			/*
+            ------- Step2 --------
+			TODO (step 2): compute the throttle error from the position and the desired speed
+			modify the following line for step 2			
 			error_throttle是用于油门控制的PID控制器的一个变量。
 			v_points是一个速度值的数组，这些速度值对应于车辆计划轨迹上的特定点。
 			close_id是v_points中与车辆当前位置最接近的速度值的索引。
 			velocity是车辆的当前速度。
-			error_throttle是通过从计划轨迹上最接近的点的速度值中减去车辆的当前速度来计算的。该值表示该点上所需速度与车辆当前速度之间的差异。 
+			error_throttle是通过从计划轨迹上最接近的点的速度值中减去车辆的当前速度来计算的。
+            该值表示该点上所需速度与车辆当前速度之间的差异。 
 			*/
 			error_throttle = v_points[close_id] - velocity;
 			double throttle_output;
 			double brake_output;
 
-			/**
-			 *TODO (step 2): uncomment these lines
-			 **/
-			// Compute control to apply
-			pid_throttle.UpdateError(error_throttle);
+			/*
+            ------- Step3 --------
+			TODO (step 2): uncomment these lines			
+			Compute control to apply
+			*/
+            pid_throttle.UpdateError(error_throttle);
 			double throttle = pid_throttle.TotalError();
 
 			// Adapt the negative throttle to break
