@@ -29,60 +29,53 @@ void PID::Init(double Kpi, double Kii, double Kdi, double output_lim_maxi, doubl
   output_lim_max = output_lim_maxi;
   output_lim_min = output_lim_mini;
   
-  delta_time = 0.0;
+  delta_time = 0.0;//微分用
 }
 
 void PID::UpdateError(double cte) {
   /*
   ------ Step2 ------
   TODO: Update PID errors based on cte.
-  UpdateError 它根据当前的横向偏差更新比例、积分和微分项的误差值。
-  cte表示当前的横向偏差，即车辆实际位置与期望轨迹之间的差异。
-  p_error、i_error和d_error变量分别表示PID控制器的比例、积分和微分项误差。
-  因为积分项的误差需要考虑历史误差的累加，而微分项的误差需要考虑当前误差与上一次误差的差异。
-  因此，对于积分项，我们需要使用+号将当前误差值累加到历史误差值中；
-  而对于微分项，我们需要使用-号计算当前误差与上一次误差的差异。
+  作用: 根据当前误差来更新这三个误差变量。这些误差变量会在后续的控制中使用，从而帮助系统更好地控制输出。
+  参数:
+  	cte表示当前的横向偏差，即车辆实际位置与期望轨迹之间的差异。
+  	p_error、i_error和d_error变量分别表示PID控制器的比例、积分和微分项误差。
   */
-//  d_error = cte - p_error;  
-//  p_error = cte;
-//  i_error = i_error + cte;
   
   if(delta_time>0){
-    d_error = (cte - p_error)/delta_time;
+    p_error = cte;
+    
+  	//积分项的误差需要考虑历史误差的累加. 因此，需要使用+号将当前误差值累加到历史误差值中
+    i_error = i_error + cte*delta_time;
+
+    //微分项的误差需要考虑当前误差与上一次误差的差异。因此,需要使用-号计算当前误差与上一次误差的差异
+    d_error = (cte-p_error) / delta_time;
+  
   }else{
     d_error = 0.0;
-  }
-  
-  p_error = cte;
-  i_error += cte*delta_time;
+  } 
 }
 
 double PID::TotalError() {
   /*
   ------ Step3 ------
   TODO: Calculate and return the total error
-  The code should return a value in the interval [output_lim_mini, output_lim_maxi]
-  */  
-  double control;
-  
-  /* 
-  TotalError函数根据这些误差值计算控制输出，即对车辆的转向角进行校正。
-  具体来说，它将比例、积分和微分项误差乘以相应的系数，并将它们相加。
-  最终的控制输出是这个总和的相反数，因为我们希望将控制输出应用于车辆的转向角，而转向角的变化方向与控制输出的变化方向相反。
-  在这段代码中，-符号是用来将控制输出取反的。
-  具体来说，我们希望将控制输出应用于车辆的转向角，而转向角的变化方向与控制输出的变化方向相反。  
-  因此，我们需要将控制输出取反，以便正确地将其应用于车辆的转向角。
+  The code should return a value in the interval [output_lim_mini, output_lim_maxi]  
+  作用:根据这些误差值计算控制输出，即对车辆的转向角进行校正。
+  	  它将比例、积分和微分项误差乘以相应的系数，并将它们相加。
+  	  最终的控制输出是这个总和的相反数，因为我们希望将控制输出应用于车辆的转向角，而转向角的变化方向与控制输出的变化方向相反。
+  -符号是用来将控制输出取反的。
+  	我们希望将控制输出应用于车辆的转向角，而转向角的变化方向与控制输出的变化方向相反。  
+  	因此，我们需要将控制输出取反，以便正确地将其应用于车辆的转向角。
   */
-  // control =  -Kp  *p_error - Ki*  i_error - Kd * d_error;
-  // 为什么不是-的??????????
-  control =  Kp * p_error + Ki * i_error + Kd * d_error;
+  double control =  Kp*p_error + Ki*i_error + Kd*d_error;
   
   if (control < output_lim_min) {
     control = output_lim_min;
   }
-  else if (control > output_lim_max){
+  else {
     control = output_lim_max;
-  }    
+  }   
 
   return control;
 }

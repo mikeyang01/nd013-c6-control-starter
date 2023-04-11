@@ -5,3 +5,4 @@
 // How would you design a way to automatically tune the PID parameters?
 // PID controller is a model free controller, i.e. it does not use a model of the car. Could you explain the pros and cons of this type of controller?
 // (Optional) What would you do to improve the PID controller?
+Added to the readme of the task.
