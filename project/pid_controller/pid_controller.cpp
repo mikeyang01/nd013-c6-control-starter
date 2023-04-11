@@ -73,7 +73,7 @@ double PID::TotalError() {
   if (control < output_lim_min) {
     control = output_lim_min;
   }
-  else {
+  else if (control > output_lim_max){
     control = output_lim_max;
   }   
 
