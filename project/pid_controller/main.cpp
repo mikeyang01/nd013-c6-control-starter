@@ -82,10 +82,6 @@ double angle_between_points(double x1, double y1, double x2, double y2)
 	return atan2(y2 - y1, x2 - x1);
 }
 
-double distance_between_points(double x1, double y1, double x2, double y2){
-  return pow((x1-x2),2) + pow((y1-y2),2);
-}
-
 BehaviorPlannerFSM behavior_planner(P_LOOKAHEAD_TIME, P_LOOKAHEAD_MIN, P_LOOKAHEAD_MAX, P_SPEED_LIMIT,
 	P_STOP_THRESHOLD_SPEED, P_REQ_STOPPED_TIME, P_REACTION_TIME,
 	P_MAX_ACCEL, P_STOP_LINE_BUFFER);
@@ -305,22 +301,8 @@ int main()
             ------- Step3 --------
 			TODO: compute the steer error from the position and the desired trajectory
 			计算车辆当前的航向角与目标点之间的角度误差。以便进行后续的控制操作，例如调整车辆的转向角度。
-            */
-          
-          	// Compute the closest point to the ego car in the planned Path, to then lookup the desired velocity at that point
-          	double dis_min = 100000.0;//初始化一个极大值
-          	int closest_id = 0;
-
-            // Find the nearest point of planned path from the ego car
-            for (int i = 0; i < x_points.size(); ++i) {
-              double act_dis = distance_between_points(x_position, y_position, x_points[i], y_points[i]);
-              if (act_dis < dis_min) {
-                dis_min = act_dis;
-                closest_id = i;               
-              }
-            }
-          
-			double target_yaw = angle_between_points(x_position, y_position, x_points[closest_id], y_points[closest_id]);
+            */          
+			double target_yaw = angle_between_points(x_position, y_position, x_points[x_points.size()-1], y_points[y_points.size()-1]);
         	error_steer = target_yaw - yaw;
 
 			/*
@@ -360,7 +342,7 @@ int main()
 
 			v_points是一个速度值的数组，这些速度值对应于车辆计划轨迹上的特定点。
 			*/
-			double error_throttle = v_points[closest_id] - velocity;//计划轨迹上最接近的点的速度值 - 当前速度
+			double error_throttle = v_points[v_points.size()-1] - velocity;//计划轨迹上最接近的点的速度值 - 当前速度
 			double throttle_output;
 			double brake_output;
 
