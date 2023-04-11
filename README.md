@@ -105,15 +105,15 @@ pip3 install matplotlib
 <img src="img/simulator.jpg"/>
 
 ### Answer the following questions:
-- Add the plots to your report and explain them (describe what you see)
+#### Add the plots to your report and explain them (describe what you see)
 Firstly, I set throttle for PID parameter as follows:
 
-Steering Plot
+Steering Plot<br>
 <img src="img/steer.png"/>
-Throttle Plot
+Throttle Plot<br>
 <img src="img/throttle.png"/>
 
-- What is the effect of the PID according to the plots, how each part of the PID affects the control command?
+#### What is the effect of the PID according to the plots, how each part of the PID affects the control command?
  
 P in PID controller is the proportional term.
 P is proportional to the current error value. 
@@ -129,7 +129,7 @@ D produces an value which is proportional to the change rate of the error value.
 In a PID controller, D is used to predict the future error based on its current change rate. 
 For example, If the car's speed slows down due to climbing mountains, D will detect the rate of change of the error and adjust the power.
 
-- How would you design a way to automatically tune the PID parameters?
+####  How would you design a way to automatically tune the PID parameters?
 
 There are several methods to tune the PID parameters, such as
 genetic algorithm method, Ziegler-Nichols method, gradient descent method, etc.
@@ -140,3 +140,5 @@ Here I prefer to use the twiddle algorithm for Parameter Optimization.
 4. If the performance has improved, keep the new parameter values and increase the change value for that parameter.
 5. If the performance has not improved, revert the parameter value and decrease the change value for that parameter.
 6. Repeat the steps above.
+
+#### PID controller is a model free controller, i.e. it does not use a model of the car. Could you explain the pros and cons of this type of controller?
